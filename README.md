@@ -78,10 +78,12 @@ http://yp.120ask.com/detail/ + 数字 +.html
 
 ```python
 selector_name = '.details-right-drug p'  # [0]
-selector_price = '.Drugs-Price span'   # [0]
+selector_price = '.Drugs-Price span'  # [0]
 selector_diseases = '.details-right-drug ul li var'
-selector_details = '.cont-Drug-details .tab-dm-1 table'  # .tablerow(.td, .td-details)
-selector_instructions = '.cont-Drug-details .tab-dm-2 table'
+selector_details_key = '.cont-Drug-details .tab-dm-1 .table .td'
+selector_details_val = '.cont-Drug-details .tab-dm-1 .table .td-details'
+selector_instructions_key = '.cont-Drug-details .tab-dm-2 .table .td'
+selector_instructions_val = '.cont-Drug-details .tab-dm-2 .table .td-details'
 ```
 
 其中名称和参考价直接获取文本即可。相关疾病、药品详情和说明书有子结构，需要进一步解析，见代码中函数 `getDiseases()` `getDetails()`

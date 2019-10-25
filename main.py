@@ -26,9 +26,12 @@ headers = {
 
 
 def CrawlPage(id):
-    data = requests.get(drug_url.format(id), headers=headers).text
-    bs = BeautifulSoup(data, "lxml")
-    return CreateItem(id, bs)
+    response = requests.get(drug_url.format(id), headers=headers)
+    if response.status_code == 404:
+        return False
+    else:
+        bs = BeautifulSoup(response.text, "lxml")
+        return CreateItem(id, bs)
 
 
 def CreateItem(id, bs):
@@ -67,14 +70,28 @@ def getDetails(list_key, list_val):
 
 
 # TODO: save to file
-def SaveJson(dict, path):
-    pass
+def SaveJson(data, path):
+    with open(path, 'w', encoding='utf-8') as file_obj:
+        json.dump(data, file_obj, ensure_ascii=False, sort_keys=True, indent=4)
 
 
 # Start
 # TODO: traverse all pages using index
 # TODO: save valid ids!!!
-id = 1
+print("Spider start running...")
 save_data = []
-save_data.append(CrawlPage(id))
-print(save_data)
+valid_id = []
+
+id = 1
+while id <= 100:
+    item = CrawlPage(id)
+    if (item):
+        save_data.append(item)
+        valid_id.append(id)
+        print('OK  :' + str(id))
+    else:
+        print('FAIL:' + str(id))
+    id = id + 1
+
+SaveJson(save_data, 'drugs_data.json')
+SaveJson(valid_id, 'valid_id.json')
