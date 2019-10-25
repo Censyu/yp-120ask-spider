@@ -63,3 +63,44 @@ http://yp.120ask.com/detail/ + 数字 +.html
 +   采集到100个页面的全部域：1分
 
 +   采集到网站全部页面：2分
+
+## 设计过程
+
+### 网站分析
+
+在药品库页面显示了该网站共有 154219 种药品（till 19/10/25）。
+
+并且搜索页面提供了 20*100 共 2000 个药品详情的链接，这远小于所有药品数，因此需要遍历以获取全部内容。此外注意到最后一页最后一个药品的 id 为 5375，显然 id 并不是连续的，中间存在大量空隙。
+
+### 数据分析
+
+查看网页源码，找到所需信息位置，并写出相应的 CSS 选择器（使用 BeautifulSoup4 进行解析）：
+
+```python
+selector_name = '.details-right-drug p'  # [0]
+selector_price = '.Drugs-Price span'   # [0]
+selector_diseases = '.details-right-drug ul li var'
+selector_details = '.cont-Drug-details .tab-dm-1 table'  # .tablerow(.td, .td-details)
+selector_instructions = '.cont-Drug-details .tab-dm-2 table'
+```
+
+其中名称和参考价直接获取文本即可。相关疾病、药品详情和说明书有子结构，需要进一步解析，见代码中函数 `getDiseases()` `getDetails()`
+
+对于相关疾病：
+
+疾病名在 `var` 标签的 onclick 属性中函数调用参数里，直接用正则表达式提取即可
+
+` tagSearch() ` 函数，查看该元素的 onclick 事件可以找到这个函数的实现：
+
+```js
+// 疾病词
+function tagSearch(kw){
+    window.open("//yp.120ask.com/search?kw="+kw);
+}
+```
+
+从而找到疾病跳转网址（但事实上这段代码写错了...应该在 `?` 前加一个 `/`）
+
+### 反爬机制
+
+这个网站的反爬机制很简单，只用设置 User-Agent 即可直接获取内容
