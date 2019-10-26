@@ -69,7 +69,6 @@ def getDetails(list_key, list_val):
     return dict(zip(l1, l2))
 
 
-# TODO: save to file
 def SaveJson(data, path):
     with open(path, 'w', encoding='utf-8') as file_obj:
         json.dump(data, file_obj, ensure_ascii=False, sort_keys=True, indent=4)
@@ -77,24 +76,23 @@ def SaveJson(data, path):
 
 # Start
 # TODO: traverse all pages using index
-# TODO: save valid ids!!!
 print("Spider start running...")
 save_data = []
 valid_id = []
 
 # Part.1: 1-200,000
-# id = 1
+id = 1
 valid_count = 0
-# while id <= 200000:
-#     item = CrawlPage(id)
-#     if (item):
-#         save_data.append(item)
-#         valid_id.append(id)
-#         print('OK  :' + str(id))
-#         valid_count += 1
-#     else:
-#         print('FAIL:' + str(id))
-#     id = id + 1
+while id <= 200000:
+    item = CrawlPage(id)
+    if (item):
+        save_data.append(item)
+        valid_id.append(id)
+        print('OK  :' + str(id))
+        valid_count += 1
+    else:
+        print('FAIL:' + str(id))
+    id = id + 1
 
-# SaveJson(save_data, 'drugs_data.json')
+SaveJson(save_data, 'drugs_data.json')
 SaveJson(valid_id, 'valid_id_{0}_in_{1}.json'.format(valid_count, 200000))
