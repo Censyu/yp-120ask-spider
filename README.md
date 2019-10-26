@@ -6,11 +6,29 @@
 
 为 2019 Web信息处理 课程开放实验项目之一。
 
+文件说明：
+
++   main.py: 爬虫主程序
++   yp-spider_batch.py: 适用于多进程的爬虫程序
++   sh: 后台多任务，完整运行对整个网站爬取的脚本
++   data.rar: 药品库所有数据 (.json 格式)
++   index.rar: 有效的 id (.json 格式)
++   statistics.xlsx: 对爬取数据的统计信息
+
+**注**：使用 `yp-spider_batch.py` 方法
+
+`> python yp-spider-batch.py {begin} {end}`
+
+{begin} 整数，id 起始值
+
+{end} 整数，id 终止值
+
 ## 相关信息
 
 +   Author: Censyu
 +   Start Date: 2019/10/25
 +   Deadline: 2019/11/9
++   Latest Update: 2019/10/26
 
 ## 实验要求
 
@@ -106,3 +124,42 @@ function tagSearch(kw){
 ### 反爬机制
 
 这个网站的反爬机制很简单，只用设置 User-Agent 即可直接获取内容
+
+### 程序架构
+
+使用 python 语言，使用 requests 获取原始数据、BeautifulSoup4 进行页面解析、re 用于提取关键词、json 存为 .json 格式文件
+
+### 数据获取
+
+为了防止意外的错误，从 0 开始遍历 id ，并以每 5000 个为一组，单独存在一个文件中，文件路径 `/data/drugs_data{N}.json` ，同时记录有效 id ，以便再次爬取时不用全部遍历，文件路径 `/index/calid_id_{valid_count}_in_{N}`
+
+参数说明：
+
++   N: 当前分组的上界（5000 * i, i from 1 to 44，总 id 范围为 0~219999）
++   valid_count: 当前分组中有效 id 个数
+
+然后创建适用于多进程的 python 程序（`yp-spider-batch.py`），即接受两个从命令行传入的参数，用于决定 id 遍历范围
+
+首先尝试前 200000 个 id，在 10/25 夜借用同学电脑运行（在此感谢 gp 同学！！），见下图统计信息：
+
+![sta](README.assets/sta.jpg)
+
+![sta2](README.assets/sta2.jpg)
+
+可以看到在 80000 之后 id 分布相当密集，此时已经有 14万左右的有效数据了
+
+继续向后运行，此前人工尝试时一经发现在 220000 后几乎就没有数据了，因此再开四个分组：
+
+发现在 215000-220000 区间貌似没有有效数据
+
+![end1](README.assets/end1.jpg)
+
+运行看看：
+
+![run](README.assets/run.jpg)
+
+最后一个分组运行到最后也没有一个成功的：
+
+![end2](README.assets/end2.jpg)
+
+将新的数据追加到数据集，最终得到 158875 个有效数据，略大于网站给出的 154219 种。数据大小 760MB 压缩后 31.1MB

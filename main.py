@@ -82,16 +82,19 @@ print("Spider start running...")
 save_data = []
 valid_id = []
 
-id = 1
-while id <= 100:
-    item = CrawlPage(id)
-    if (item):
-        save_data.append(item)
-        valid_id.append(id)
-        print('OK  :' + str(id))
-    else:
-        print('FAIL:' + str(id))
-    id = id + 1
+# Part.1: 1-200,000
+# id = 1
+valid_count = 0
+# while id <= 200000:
+#     item = CrawlPage(id)
+#     if (item):
+#         save_data.append(item)
+#         valid_id.append(id)
+#         print('OK  :' + str(id))
+#         valid_count += 1
+#     else:
+#         print('FAIL:' + str(id))
+#     id = id + 1
 
-SaveJson(save_data, 'drugs_data.json')
-SaveJson(valid_id, 'valid_id.json')
+# SaveJson(save_data, 'drugs_data.json')
+SaveJson(valid_id, 'valid_id_{0}_in_{1}.json'.format(valid_count, 200000))
